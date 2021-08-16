@@ -374,8 +374,6 @@
 
  init();
 
- console.log("This is a darawing tool");
-
  $('#toggleMap').click(function(){
  	// console.log($(this).text());
  	if ( $(this).text() == "Toggle Map") {
