@@ -176,7 +176,6 @@
 		});
 
 			L.marker([51.863831603254674, 5.855798721313476], {icon: greenIcon, draggable:'true'}).addTo(myMap);
-
 	</script>
 
   <script type="text/javascript">
@@ -374,6 +373,8 @@
  };
 
  init();
+
+ console.log("This is a darawing tool");
 
  $('#toggleMap').click(function(){
  	// console.log($(this).text());
