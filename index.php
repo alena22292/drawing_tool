@@ -183,7 +183,22 @@
 			// L.marker([51.863831603254674, 5.855798721313476], {icon: greenIcon, draggable:'true'}).addTo(myMap);
 
 			const drawnItems = new L.FeatureGroup();
-			var json = drawnItems.toGeoJSON();
+			
+			// Store data inJSON format. "features" is array of objects as a variable feature
+
+			let dataPolygons = {
+				"type": "FeatureCollection",
+        "features": []
+			};
+
+			let feature = {
+				"type": "Feature",
+        "properties": {},
+        "geometry": {
+	        "type": "Polygon",
+	        "coordinates": []
+				}
+			};
 
 			myMap.addLayer(drawnItems);
 
@@ -211,11 +226,59 @@
 			L.Draw.Polyline.prototype._onTouch = L.Util.falseFn;
 
 			myMap.on(L.Draw.Event.CREATED, function (event) {
-	        var layer = event.layer;
-	        
-	        // console.log(layer.getLatLngs());
-	        drawnItems.addLayer(layer);
+	        var type = event.layerType,
+	            layer = event.layer;
+
+	        if (type === 'polygon') {
+
+	        	let result = layer.getLatLngs();
+	        	let coordinate = result[0];
+
+	        	let geoCoordinate = [];
+
+            if (coordinate.length > 0) {
+            	for (let i=0; i<coordinate.length; i++) {
+				     	   let newCoordinate = [coordinate[i].lng, coordinate[i].lat];
+				     	   geoCoordinate.push(newCoordinate);
+				      }
+				      geoCoordinate.push(geoCoordinate[0]);
+            }
+
+	        	let polygonObj = {
+	        		"type": "Feature",
+			        "properties": {},
+			        "geometry": {
+				        "type": "Polygon",
+				        "coordinates": [geoCoordinate]
+							}
+	        	}
+	        	dataPolygons.features.push(polygonObj);
+	        }
+          // This code will add drawings as layers (L.Draw)
+	        // drawnItems.addLayer(layer);
+
+	        L.geoJSON(dataPolygons).addTo(myMap);
 	    });
+
+
+	    // example
+
+     // let newArray;
+
+     // what we have now:
+	   // let coordinate = [
+		  //  {lat: 51.86402604123584, lng: 5.853298902511598}, 
+		  //  {lat: 51.86402604123584, lng: 5.853298902511598}, 
+		  //  {lat: 51.86402604123584, lng: 5.853298902511598}
+	   // ]
+
+     // for (let i=0; i<coordinate.length; i++) {
+     // 	   let newCoordinate = [coordinate[i].lng, coordinate[i].lat];
+     // 	   // obj coordinates:
+     // 	   console.log(newCoordinate);
+     // }
+
+
 
 	</script>
 
