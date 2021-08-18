@@ -165,7 +165,7 @@
 			const mapBoxLayer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 			    id: 'mapbox/streets-v11',
 			    accessToken: accessToken,
-			    maxZoom: 19,
+			    maxZoom: 22,
 			    tileSize: 512,
 			    zoomOffset: -1,
 			    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
@@ -173,14 +173,24 @@
 			});
 
       const myMap = L.map('map', {layers: [mapBoxLayer]}).setView([51.863831603254674, 5.855798721313476], 17);
+      
 
+      // custom icon for a marker
 			var greenIcon = L.icon({
-		    iconUrl: 'images/map2.png',
-		    iconSize:     [229, 229], // size of the icon
-		    iconAnchor:   [130, 130], // point of the icon which will correspond to marker's location
-		});
+			    iconUrl: 'images/map2.png',
+			    iconSize:     [229, 229], // size of the icon
+			    iconAnchor:   [130, 130], // point of the icon which will correspond to marker's location
+		  });
+      
+      // Draggable marker
+			let marker = L.marker([51.863831603254674, 5.855798721313476], {draggable:'true'}).addTo(myMap);
+			marker.on('drag', function(e) {
+				console.log(this.getLatLng());
+			})
 
-			// L.marker([51.863831603254674, 5.855798721313476], {icon: greenIcon, draggable:'true'}).addTo(myMap);
+			var imageUrl = 'images/map2.png';
+			let imageBounds = [[51.86464537419175, 5.854438751630369], [51.863250212923816, 5.856677389674588]];
+			L.imageOverlay(imageUrl, imageBounds).addTo(myMap);
 
 			const drawnItems = new L.FeatureGroup();
 			
@@ -229,6 +239,12 @@
 	        var type = event.layerType,
 	            layer = event.layer;
 
+
+	        if (type === "marker") {
+	        	drawnItems.addLayer(layer);
+	        	console.log(layer._latlng);
+	        }
+
 	        if (type === 'polygon') {
 
 	        	let result = layer.getLatLngs();
@@ -246,7 +262,13 @@
 
 	        	let polygonObj = {
 	        		"type": "Feature",
-			        "properties": {},
+			       "properties": {
+				        "stroke": "#9e90e4",
+				        "stroke-width": 2,
+				        "stroke-opacity": 1,
+				        "fill": "#efeef2",
+				        "fill-opacity": 0.5
+				      },
 			        "geometry": {
 				        "type": "Polygon",
 				        "coordinates": [geoCoordinate]
